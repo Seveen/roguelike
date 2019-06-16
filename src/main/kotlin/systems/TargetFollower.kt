@@ -19,6 +19,7 @@ object TargetFollower : BaseBehavior<GameContext>() {
         val decisionMaps = mutableListOf<DecisionMap>()
         var finalDecisionMap: DecisionMap
 
+        //TODO(Must be able to chain dm behaviors and have followers and fleers THEN add them all)
         if (entity.isDecisionMapUser && pos.isUnknown().not()) {
             entity.findAttribute(DecisionMapUser::class).get().weightedTags.forEach {
                 var dm = world.getDecisionMapByTag(it.key)
@@ -34,7 +35,7 @@ object TargetFollower : BaseBehavior<GameContext>() {
                 MoveTo(
                     context = context,
                     source = entity,
-                    position = finalDecisionMap.findLowestCardinalAround(entity.position)
+                    position = finalDecisionMap.findLowestAround(entity.position)
                 )
             )
             return true

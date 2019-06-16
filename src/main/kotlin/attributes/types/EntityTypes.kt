@@ -25,6 +25,9 @@ object Bat : BaseEntityType(
 object Stalker : BaseEntityType(
     name = "stalker"), Combatant, ItemHolder
 
+object Kobold : BaseEntityType(
+    name = "kobold"), Combatant, ItemHolder
+
 object Zircon : BaseEntityType(
     name = "Zircon",
     description = "A small piece of Zircon. Its value is unfathomable."), Item

@@ -33,7 +33,8 @@ class GameBuilder(val worldSize: Size3D) {
         val player = addPlayer()
         addFungi()
         addBats()
-        addStalker()
+//        addStalker()
+        addKobold()
         addZircons()
 
         val game = Game.create(
@@ -87,6 +88,14 @@ class GameBuilder(val worldSize: Size3D) {
     private fun addStalker() = also {
         repeat(world.actualSize().zLength) { level ->
             EntityFactory.newStalker().addToWorld(level)
+        }
+    }
+
+    private fun addKobold() = also {
+        repeat(world.actualSize().zLength) { level ->
+            repeat(10) {
+                EntityFactory.newKobold().addToWorld(level)
+            }
         }
     }
 

@@ -111,10 +111,29 @@ object EntityFactory {
             Inventory(1).apply {
                 addItem(newZircon())
             },
-            DecisionMapUser(hashMapOf("player" to 1))
+            DecisionMapUser(hashMapOf("player" to 1.0))
         )
         facets(Movable, Attackable, ItemDropper, LootDropper, Destructible)
         behaviors(TargetFollower)
+    }
+
+    fun newKobold() = newGameEntityOfType(Kobold) {
+        attributes(BlockOccupier,
+            EntityPosition(),
+            EntityTile(GameTileRepository.KOBOLD),
+            CombatStats.create(
+                maxHp = 10,
+                attackValue = 4,
+                defenseValue = 1),
+            EntityActions(Attack::class),
+            Faction(CaveDwellersFaction),
+            Inventory(1).apply {
+                addItem(newZircon())
+            },
+            DecisionMapUser(hashMapOf("player" to 1.0))
+        )
+        facets(Movable, Attackable, ItemDropper, LootDropper, Destructible)
+        behaviors(TargetFleer)
     }
 
     fun newZircon() = newGameEntityOfType(Zircon) {

@@ -72,6 +72,12 @@ object GameTileRepository {
         .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
         .buildCharacterTile()
 
+    val KOBOLD: CharacterTile = Tiles.newBuilder()
+        .withCharacter('k')
+        .withForegroundColor(GameColors.KOBOLD_COLOR)
+        .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+        .buildCharacterTile()
+
     val ZIRCON: CharacterTile = Tiles.newBuilder()
         .withCharacter(',')
         .withForegroundColor(GameColors.ZIRCON_COLOR)

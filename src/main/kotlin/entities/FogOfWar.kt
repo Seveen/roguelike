@@ -28,7 +28,7 @@ class FogOfWar(game: Game) : BaseEntity<FogOfWarType, GameContext>(FogOfWarType)
                 .build()
                 .fill(GameTileRepository.DM)
             fows[level] = fow
-            world.pushOverlayAt(fow, level)
+//            world.pushOverlayAt(fow, level)
         }
     }
 
@@ -45,12 +45,12 @@ class FogOfWar(game: Game) : BaseEntity<FogOfWarType, GameContext>(FogOfWarType)
 
     init {
         updateFOW()
-        updateDM()
+//        updateDM()
     }
 
     override fun update(context: GameContext): Boolean {
         updateFOW()
-        updateDM()
+//        updateDM()
         return true
     }
 
@@ -64,35 +64,45 @@ class FogOfWar(game: Game) : BaseEntity<FogOfWarType, GameContext>(FogOfWarType)
        private fun updateDM() {
         DMPerLevel[player.position.z]?.fill(GameTileRepository.DM)
         world.actualSize().fetchPositions().filter{ it.z == player.position.z}.forEach {
-            var nber = world.getDecisionMapByTag("player")?.getValueAtPosition(it) ?: Int.MAX_VALUE
+            var nber = world.getDecisionMapByTag("player")?.getInvertedValueAtPosition(it) ?: Double.MAX_VALUE
             var char = 'F'
             var color: TileColor
+            var fgcolor: TileColor = TileColor.fromString("#FFFFFF")
             when {
-                nber < 5 -> {
-                    color = TileColor.create(255,0,0,63)
-                    char = (nber + '0'.toInt()).toChar()
-                }
-                nber < 10 -> {
-                    color = TileColor.create(127,0,127,63)
-                    char = (nber + '0'.toInt()).toChar()
-                }
-                nber < 16 -> {
-                    color = TileColor.create(0,0,255,63)
-                    char = (nber -10 + 'A'.toInt()).toChar()
-                }
-                nber == Int.MAX_VALUE -> {
+                nber == 0.0 -> {
                     color = TileColor.create(0,0,0,63)
-                    char = ' '
+                    //char = ' '
+                }
+                nber < 5.0 && nber > -5.0 -> {
+                    color = TileColor.create(255,0,0,63)
+                    char = (Math.round(Math.abs(nber)) + '0'.toInt()).toChar()
+                }
+                nber < 10.0 && nber > -10.0 -> {
+                    color = TileColor.create(127,0,127,63)
+                    char = (Math.round(Math.abs(nber)) + '0'.toInt()).toChar()
+                }
+                nber < 16.0 && nber > -16.0 -> {
+                    color = TileColor.create(0,0,255,63)
+                    char = (Math.round(Math.abs(nber)) - 10.0 + 'A'.toInt()).toChar()
+                }
+                nber == Double.MAX_VALUE -> {
+                    color = TileColor.create(0,0,0,63)
+                    char = '#'
                 }
                 else -> {
                     color = TileColor.create(255,0,255,63)
                     char = 'F'
                 }
             }
+            when {
+                nber < 0 -> {
+                    fgcolor = TileColor.fromString("#000000")
+                }
+            }
 
             val newTile = Tiles.newBuilder()
                 .withCharacter(char)
-                .withForegroundColor(TileColor.fromString("#FFFFFF"))
+                .withForegroundColor(fgcolor)
                 .withBackgroundColor(color)
                 .buildCharacterTile()
             DMPerLevel[player.position.z]?.setTileAt(it.to2DPosition(), newTile)
