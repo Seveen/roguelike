@@ -25,6 +25,12 @@ object InputReceiver : BaseBehavior<GameContext>() {
                 KeyCode.KEY_A -> player.moveTo(currentPos.withRelativeX(-1), context)
                 KeyCode.KEY_S -> player.moveTo(currentPos.withRelativeY(1), context)
                 KeyCode.KEY_D -> player.moveTo(currentPos.withRelativeX(1), context)
+
+                KeyCode.KEY_Q -> player.moveTo(currentPos.withRelativeX(-1).withRelativeY(-1), context)
+                KeyCode.KEY_E -> player.moveTo(currentPos.withRelativeX(1).withRelativeY(-1), context)
+                KeyCode.KEY_Z -> player.moveTo(currentPos.withRelativeX(-1).withRelativeY(1), context)
+                KeyCode.KEY_C -> player.moveTo(currentPos.withRelativeX(1).withRelativeY(1), context)
+
                 KeyCode.KEY_R -> player.moveUp(context)
                 KeyCode.KEY_F -> player.moveDown(context)
                 KeyCode.KEY_P -> player.pickItemUp(currentPos, context)
@@ -42,7 +48,7 @@ object InputReceiver : BaseBehavior<GameContext>() {
 
         executeCommand(MoveTo(context, this, position))
         executeCommand(MoveCamera(context, this, oldPos))
-}
+    }
 
     private fun GameEntity<Player>.moveDown(context: GameContext) {
         val oldPos = this.position.copy()
