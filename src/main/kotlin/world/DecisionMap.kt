@@ -6,6 +6,7 @@ import org.hexworks.zircon.api.data.impl.Size3D
 
 class DecisionMap(private val size: Size3D, callback: (position: Position3D) -> Boolean) {
     private var valueArray = IntArray(size.xLength * size.yLength)
+    private var processPositionArray = BooleanArray(size.xLength * size.yLength)
     private var listOfTargetPositions = mutableListOf<Position3D>()
 
     private val processPositionCallback: (position: Position3D) -> Boolean = callback
@@ -18,7 +19,7 @@ class DecisionMap(private val size: Size3D, callback: (position: Position3D) -> 
         listOfTargetPositions.remove(position)
     }
 
-    fun processSlow(level: Int) {
+    fun processIterator(level: Int) {
         var changesMade: Boolean
         val newValueArray = IntArray(size.xLength * size.yLength) { Int.MAX_VALUE }
         resetValues(level)
@@ -48,7 +49,7 @@ class DecisionMap(private val size: Size3D, callback: (position: Position3D) -> 
         } while(changesMade)
     }
 
-    fun process(level: Int) {
+    fun processForLoops(level: Int) {
         var changesMade: Boolean
         val newValueArray = IntArray(size.xLength * size.yLength) { Int.MAX_VALUE }
         resetValues(level)
@@ -74,6 +75,67 @@ class DecisionMap(private val size: Size3D, callback: (position: Position3D) -> 
                     newValueArray[it.y * size.xLength + it.x] = 0
                 }
                 setValueArray(newValueArray)
+            }
+        } while (changesMade)
+    }
+
+    fun processPrecalculateCallback(level: Int) {
+        var changesMade: Boolean
+        val newValueArray = IntArray(size.xLength * size.yLength) { Int.MAX_VALUE }
+        resetValues(level)
+
+        for (y in 0 until size.yLength) {
+            for (x in 0 until size.xLength) {
+                processPositionArray[y * size.xLength + x] = processPositionCallback(Position3D.create(x, y, level))
+            }
+        }
+
+        do {
+            changesMade = false
+
+            for (y in 0 until size.yLength) {
+                for (x in 0 until size.xLength) {
+                    if (processPositionArray[y * size.xLength + x]) {
+                        val currentValue = getValueAtCoords(x, y)
+                        val lowestValue = getLowestNeighborAtCoords(x, y)
+
+                        if (currentValue - lowestValue > 1) {
+                            newValueArray[y * size.xLength + x] = lowestValue + 1
+                            changesMade = true
+                        } else {
+                            newValueArray[y * size.xLength + x] = currentValue
+                        }
+                    }
+                }
+                listOfTargetPositions.forEach {
+                    newValueArray[it.y * size.xLength + it.x] = 0
+                }
+                setValueArray(newValueArray)
+            }
+        } while (changesMade)
+    }
+
+    fun process(level: Int) {
+        var changesMade: Boolean
+        resetValues(level)
+
+        do {
+            changesMade = false
+
+            for (y in 0 until size.yLength) {
+                for (x in 0 until size.xLength) {
+                    if (processPositionCallback(Position3D.create(x, y, level))) {
+                        val currentValue = getValueAtCoords(x, y)
+                        val lowestValue = getLowestNeighborAtCoords(x, y)
+
+                        if (currentValue - lowestValue > 1) {
+                            valueArray[y * size.xLength + x] = lowestValue + 1
+                            changesMade = true
+                        } else {
+                            valueArray[y * size.xLength + x] = currentValue
+                        }
+                    }
+                }
             }
         } while (changesMade)
     }
