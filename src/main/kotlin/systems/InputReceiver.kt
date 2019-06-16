@@ -4,8 +4,6 @@ import com.necroworld.attributes.types.Player
 import com.necroworld.commands.*
 import com.necroworld.extensions.GameEntity
 import com.necroworld.extensions.position
-import com.necroworld.extensions.sameLevelCardinalNeighbors
-import com.necroworld.functions.logGameEvent
 import com.necroworld.world.GameContext
 import org.hexworks.amethyst.api.base.BaseBehavior
 import org.hexworks.amethyst.api.entity.EntityType
