@@ -182,4 +182,9 @@ class World(startingBlocks: Map<Position3D, GameBlock>,
     companion object {
         private val DEFAULT_BLOCK = GameBlockFactory.floor()
     }
+
+    fun screenToWorldPosition(screenPosition:Position, screenOffset: Position) : Position {
+        val worldOffset = this.visibleOffset().to2DPosition()
+        return screenPosition.plus(worldOffset).minus(screenOffset)
+    }
 }
