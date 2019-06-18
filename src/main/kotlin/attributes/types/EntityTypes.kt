@@ -14,7 +14,7 @@ object StairsUp : BaseEntityType(
     name = "stairs up")
 
 object Player : BaseEntityType(
-    name = "player"), Combatant, ItemHolder
+    name = "player"), Combatant, ItemHolder, Spellcaster
 
 object Fungus : BaseEntityType(
     name = "fungus"), Combatant

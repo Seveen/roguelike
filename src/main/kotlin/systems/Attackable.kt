@@ -15,27 +15,28 @@ import org.hexworks.amethyst.api.extensions.responseWhenCommandIs
 
 object Attackable : BaseFacet<GameContext>() {
 
-    override fun executeCommand(command: GameCommand<out EntityType>) = command.responseWhenCommandIs(Attack::class) { (context, attacker, target) ->
-        var allied = false
-        if (attacker.hasFaction && target.hasFaction) {
-            allied = attacker.faction == target.faction
-        }
-        if (allied.not()) {
-            val damage = Math.max(0, attacker.combatStats.attackValue - target.combatStats.defenseValue)
-            val finalDamage = (Math.random() * damage).toInt() + 1
-            target.combatStats.hp -= finalDamage
-
-            logGameEvent("The $attacker hits the $target for $finalDamage!")
-
-            target.whenHasNoHealthLeft {
-                target.executeCommand(Destroy(
-                    context = context,
-                    source = attacker,
-                    target = target,
-                    cause = "a blow to the head"
-                ))
+    override fun executeCommand(command: GameCommand<out EntityType>) =
+        command.responseWhenCommandIs(Attack::class) { (context, attacker, target) ->
+            var allied = false
+            if (attacker.hasFaction && target.hasFaction) {
+                allied = attacker.faction == target.faction
             }
-            Consumed
-        } else Pass
+            if (allied.not()) {
+                val damage = Math.max(0, attacker.combatStats.attackValue - target.combatStats.defenseValue)
+                val finalDamage = (Math.random() * damage).toInt() + 1
+                target.combatStats.hp -= finalDamage
+
+                logGameEvent("The $attacker hits the $target for $finalDamage!")
+
+                target.whenHasNoHealthLeft {
+                    target.executeCommand(Destroy(
+                        context = context,
+                        source = attacker,
+                        target = target,
+                        cause = "a blow to the head"
+                    ))
+                }
+                Consumed
+            } else Pass
     }
 }

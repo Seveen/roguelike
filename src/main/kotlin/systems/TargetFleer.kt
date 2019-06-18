@@ -27,13 +27,13 @@ object TargetFleer : BaseBehavior<GameContext>() {
                     decisionMaps.add(dm)
                 }
             }
-            //TODO(DEBUG)
+            //TODO(DEBUG, you need to account for all decisionMaps)
             finalDecisionMap = decisionMaps.first()
             entity.executeCommand(
                 MoveTo(
                     context = context,
                     source = entity,
-                    position = finalDecisionMap.findLowestlAroundOnInverted(entity.position)
+                    position = finalDecisionMap.findLowestAroundOnInverted(entity.position)
                 )
             )
             return true

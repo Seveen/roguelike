@@ -19,6 +19,21 @@ object GameTileRepository {
         .withBackgroundColor(TileColor.transparent())
         .buildCharacterTile()
 
+    val SELECTED_VALID = Tiles.newBuilder()
+        .withCharacter(' ')
+        .withBackgroundColor(GameColors.SELECTED_VALID_COLOR)
+        .buildCharacterTile()
+
+    val SELECTED_INVALID = Tiles.newBuilder()
+        .withCharacter(' ')
+        .withBackgroundColor(GameColors.SELECTED_INVALID_COLOR)
+        .buildCharacterTile()
+
+    val IN_RANGE =Tiles.newBuilder()
+        .withCharacter(' ')
+        .withBackgroundColor(GameColors.IN_RANGE_COLOR)
+        .buildCharacterTile()
+
     /*val NOT_IN_SIGHT = Tiles.newBuilder()
         .withCharacter(' ')
         .withBackgroundColor(GameColors.NOT_IN_SIGHT_COLOR)

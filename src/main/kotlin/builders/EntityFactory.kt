@@ -33,13 +33,16 @@ object EntityFactory {
                 attackValue = 10,
                 defenseValue = 5
             ),
+            SpellcastStats.create(
+                maxMana = 1000
+            ),
             Vision(9),
             Faction(PlayerFaction),
             Inventory(10),
             DecisionMapTarget("player")
         )
         behaviors(InputReceiver)
-        facets(Movable, CameraMover, StairClimber, StairDescender, Attackable, Destructible, ItemPicker, ItemDropper, InventoryInspector, DecisionMapUpdater)
+        facets(TargetPicker, Spellcastable, Movable, CameraMover, StairClimber, StairDescender, Attackable, Destructible, ItemPicker, ItemDropper, InventoryInspector, DecisionMapUpdater)
     }
 
     fun newFogOfWar(game: Game) = FogOfWar(game)

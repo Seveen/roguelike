@@ -22,4 +22,8 @@ object GameColors {
     val ZIRCON_COLOR = TileColors.fromString("#dddddd")
 
     val COLD = TileColor.create(0,0,255,63)
+
+    val SELECTED_VALID_COLOR = TileColor.create(0, 255, 0, 63)
+    val SELECTED_INVALID_COLOR = TileColor.create(255, 0, 0, 63)
+    val IN_RANGE_COLOR = TileColor.create(0, 0, 255, 63)
 }

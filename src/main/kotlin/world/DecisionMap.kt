@@ -22,11 +22,6 @@ class DecisionMap(private val size: Size3D, private val callback: (position: Pos
         computeInverted(level)
     }
 
-    fun computeInverted(level: Int) {
-        invertArray(level)
-        compute(invertedValueArray, level)
-    }
-
     fun findLowestCardinalAround(position: Position3D): Position3D {
         var lowest = Double.MAX_VALUE
         var lowestPosition: Position3D = position
@@ -78,7 +73,7 @@ class DecisionMap(private val size: Size3D, private val callback: (position: Pos
         return lowestPosition
     }
 
-    fun findLowestlAroundOnInverted(position: Position3D): Position3D {
+    fun findLowestAroundOnInverted(position: Position3D): Position3D {
         var lowest = Double.MAX_VALUE
         var lowestPosition: Position3D = position
 
@@ -180,7 +175,12 @@ class DecisionMap(private val size: Size3D, private val callback: (position: Pos
         } while (changesMade)
     }
 
-    private fun invertArray(level: Int) {
+    private fun computeInverted(level: Int) {
+        invertArray()
+        compute(invertedValueArray, level)
+    }
+
+    private fun invertArray() {
         for (y in 0 until size.yLength) {
             for (x in 0 until size.xLength) {
                 if (valueArray[y * size.xLength + x] != Double.MAX_VALUE) {
@@ -189,13 +189,6 @@ class DecisionMap(private val size: Size3D, private val callback: (position: Pos
                     invertedValueArray[y * size.xLength + x] = Double.MAX_VALUE
                 }
             }
-        }
-    }
-
-    private fun setValueAtPosition(position: Position3D, value: Double) {
-        val outsideLimits = position.x < 0 || position.x >= size.xLength || position.y < 0 || position.y >= size.yLength
-        if (outsideLimits.not()) {
-            this.valueArray[(position.y * size.xLength) + position.x] = value
         }
     }
 
@@ -245,20 +238,6 @@ class DecisionMap(private val size: Size3D, private val callback: (position: Pos
         } else {
             Double.MAX_VALUE
         }
-    }
-
-    private fun getLowestNeighbor(position: Position3D): Double {
-        var lowest = Double.MAX_VALUE
-
-        position.sameLevelCardinalNeighbors()
-            .forEach {
-                val actualValue = getValueAtPosition(it)
-                if ( actualValue < lowest) {
-                    lowest = actualValue
-                }
-            }
-
-        return lowest
     }
 
     private fun setValueArray(value: DoubleArray) {
