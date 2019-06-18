@@ -3,9 +3,8 @@ package com.necroworld.view.fragment
 import com.necroworld.attributes.Inventory
 import com.necroworld.extensions.GameItem
 import org.hexworks.zircon.api.Components
-import org.hexworks.zircon.api.component.Component
 import org.hexworks.zircon.api.component.Fragment
-import org.hexworks.zircon.api.extensions.onComponentEvent
+import org.hexworks.zircon.api.extensions.processComponentEvents
 import org.hexworks.zircon.api.uievent.ComponentEventType
 import org.hexworks.zircon.api.uievent.Processed
 
@@ -27,7 +26,7 @@ class InventoryFragment(inventory: Inventory,
             })
             inventory.items.forEach { item ->
                 addFragment(InventoryRowFragment(width, item).apply {
-                    dropButton.onComponentEvent(ComponentEventType.ACTIVATED) {
+                    dropButton.processComponentEvents(ComponentEventType.ACTIVATED) {
                         list.removeComponent(this.root)
                         onDrop(item)
                         Processed

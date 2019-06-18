@@ -9,7 +9,6 @@ import org.hexworks.zircon.api.graphics.Symbols
 class InventoryRowFragment(width: Int, item: GameItem) : Fragment {
 
     val dropButton = Components.button()
-        .wrapSides(false)
         .withText("${Symbols.ARROW_DOWN}")
         .build()
 

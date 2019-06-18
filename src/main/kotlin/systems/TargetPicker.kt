@@ -8,7 +8,6 @@ import com.necroworld.commands.SelectTarget
 import com.necroworld.extensions.*
 import com.necroworld.world.GameContext
 import org.hexworks.amethyst.api.Consumed
-import org.hexworks.amethyst.api.Pass
 import org.hexworks.amethyst.api.base.BaseFacet
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.zircon.api.Components
@@ -20,9 +19,7 @@ import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Size
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Position3D
-import org.hexworks.zircon.api.extensions.onClosed
-import org.hexworks.zircon.api.extensions.onKeyboardEvent
-import org.hexworks.zircon.api.extensions.onMouseEvent
+import org.hexworks.zircon.api.extensions.*
 import org.hexworks.zircon.api.game.ProjectionMode
 import org.hexworks.zircon.api.uievent.KeyCode
 import org.hexworks.zircon.api.uievent.KeyboardEventType
@@ -34,11 +31,14 @@ object TargetPicker : BaseFacet<GameContext>() {
     override fun executeCommand(command: GameCommand<out EntityType>) = command.
         responseWhenCommandIs(SelectTarget::class) { (context, source, spell) ->
             val (world, screen, uiEvent) = context
+            var mousePosition = screen.cursorPosition()
+            println(mousePosition)
 
             val selectionLayer = Layers.newBuilder()
                 .withSize(world.actualSize().to2DSize())
                 .build()
             world.pushOverlayAt(selectionLayer, source.position.z)
+
 
             val rangeAOE = source.position.to2DPosition().buildAOEWithRadius(spell.baseRange)
 
@@ -49,7 +49,7 @@ object TargetPicker : BaseFacet<GameContext>() {
             val range = spell.baseRange
             val aoe = spell.areaOfEffect
 
-            var mousePosition = Position.defaultPosition()
+
 
             val listOfTargetPositions = mutableListOf<Position3D>()
 
@@ -59,8 +59,7 @@ object TargetPicker : BaseFacet<GameContext>() {
 
             val sidebar = Components.panel()
                 .withSize(GameConfig.SIDEBAR_WIDTH, GameConfig.WINDOW_HEIGHT)
-                .withTitle("Casting ${spell.name}")
-                .wrapWithBox()
+                .withDecorations(box(title = "Casting ${spell.name}"))
                 .build()
             panel.addComponent(sidebar)
 
@@ -78,7 +77,7 @@ object TargetPicker : BaseFacet<GameContext>() {
                 .withAlignmentWithin(screen, ComponentAlignment.TOP_RIGHT)
                 .build()
 
-            gameComponent.onKeyboardEvent(KeyboardEventType.KEY_PRESSED) { event, _ ->
+            gameComponent.processKeyboardEvents(KeyboardEventType.KEY_PRESSED) { event, _ ->
                 when(event.code) {
                     KeyCode.ESCAPE -> {
                         modal.close(TargetPickerModalResult(false, listOf()))
@@ -92,7 +91,7 @@ object TargetPicker : BaseFacet<GameContext>() {
                 }
             }
 
-            gameComponent.onMouseEvent(MouseEventType.MOUSE_MOVED) { event, _ ->
+            gameComponent.processMouseEvents(MouseEventType.MOUSE_MOVED) { event, _ ->
                 val worldOffset = world.visibleOffset().to2DPosition()
                 val componentOffset = gameComponent.absolutePosition
 
@@ -114,11 +113,15 @@ object TargetPicker : BaseFacet<GameContext>() {
                 Processed
             }
 
-            gameComponent.onMouseEvent(MouseEventType.MOUSE_RELEASED) { event, _ ->
+            gameComponent.processMouseEvents(MouseEventType.MOUSE_RELEASED) { event, _ ->
                 when(event.button) {
                     1 -> {
                         aoe.forEach {
-                            listOfTargetPositions.add(mousePosition.plus(it).toPosition3D(source.position.z))
+                            val actualPosition = mousePosition.plus(it).toPosition3D(source.position.z)
+                            val outsideLimits = actualPosition.x < 0 || actualPosition.x >= world.actualSize().xLength || actualPosition.y < 0 || actualPosition.y >= world.actualSize().yLength
+                            if (outsideLimits.not()) {
+                                listOfTargetPositions.add(actualPosition)
+                            }
                         }
                         modal.close(TargetPickerModalResult(true, listOfTargetPositions))
                         Processed

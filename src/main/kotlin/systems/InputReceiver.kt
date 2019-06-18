@@ -4,8 +4,10 @@ import com.necroworld.attributes.types.Player
 import com.necroworld.commands.*
 import com.necroworld.extensions.GameEntity
 import com.necroworld.extensions.position
+import com.necroworld.spells.Blink
 import com.necroworld.spells.Fireball
 import com.necroworld.spells.Spell
+import com.necroworld.spells.Swap
 import com.necroworld.world.GameContext
 import org.hexworks.amethyst.api.base.BaseBehavior
 import org.hexworks.amethyst.api.entity.EntityType
@@ -39,6 +41,8 @@ object InputReceiver : BaseBehavior<GameContext>() {
                 KeyCode.KEY_I -> player.inspectInventory(currentPos, context)
 
                 KeyCode.KEY_G -> player.selectTargets(context, Fireball())
+                KeyCode.KEY_H -> player.selectTargets(context, Swap())
+                KeyCode.KEY_X -> player.selectTargets(context, Blink())
 
                 else -> {
                     logger.debug("UI Event ($uiEvent) does not have a corresponding command, it is ignored")

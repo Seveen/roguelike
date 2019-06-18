@@ -14,7 +14,7 @@ import com.necroworld.world.GameContext
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.zircon.api.data.Position
 
-class Fireball : Spell {
+class Fireball : EntitySpell {
     override val name = "Fireball"
     override val baseManaCost = 5
     override val baseRange = 15

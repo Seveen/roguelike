@@ -4,18 +4,19 @@ import com.necroworld.GameConfig
 import org.hexworks.amethyst.api.Consumed
 import org.hexworks.amethyst.api.base.BaseFacet
 import org.hexworks.amethyst.api.entity.EntityType
-import com.necroworld.attributes.types.ItemHolder
 import com.necroworld.attributes.types.inventory
 import com.necroworld.commands.DropItem
 import com.necroworld.commands.InspectInventory
 import com.necroworld.extensions.GameCommand
 import com.necroworld.view.fragment.InventoryFragment
 import com.necroworld.world.GameContext
+import org.hexworks.zircon.api.ComponentDecorations.box
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Sizes
 import org.hexworks.zircon.api.builder.component.ModalBuilder
 import org.hexworks.zircon.api.component.ComponentAlignment.BOTTOM_LEFT
-import org.hexworks.zircon.api.extensions.onComponentEvent
+import org.hexworks.zircon.api.extensions.processComponentEvents
+import org.hexworks.zircon.api.extensions.shadow
 import org.hexworks.zircon.api.uievent.ComponentEventType.ACTIVATED
 import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.internal.component.modal.EmptyModalResult
@@ -38,9 +39,7 @@ object InventoryInspector : BaseFacet<GameContext>() {
 
             val panel = Components.panel()
                 .withSize(DIALOG_SIZE)
-                .wrapWithBox(true)
-                .wrapWithShadow(true)
-                .withTitle("Inventory")
+                .withDecorations(box(title = "Inventory"))
                 .build()
 
             panel.addFragment(fragment)
@@ -55,7 +54,7 @@ object InventoryInspector : BaseFacet<GameContext>() {
                 .withAlignmentWithin(panel, BOTTOM_LEFT)
                 .build()
                 .apply {
-                    onComponentEvent(ACTIVATED) {
+                    processComponentEvents(ACTIVATED) {
                         modal.close(EmptyModalResult)
                         Processed
                     }
