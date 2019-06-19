@@ -1,11 +1,13 @@
 package com.necroworld.systems
 
 import com.necroworld.GameConfig
+import com.necroworld.attributes.types.Spellcaster
 import com.necroworld.blocks.GameBlock
 import com.necroworld.builders.GameTileRepository
 import com.necroworld.commands.CastSpell
 import com.necroworld.commands.SelectTarget
 import com.necroworld.extensions.*
+import com.necroworld.spells.Spell
 import com.necroworld.world.GameContext
 import org.hexworks.amethyst.api.Consumed
 import org.hexworks.amethyst.api.base.BaseFacet
@@ -21,37 +23,29 @@ import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Position3D
 import org.hexworks.zircon.api.extensions.*
 import org.hexworks.zircon.api.game.ProjectionMode
-import org.hexworks.zircon.api.uievent.KeyCode
-import org.hexworks.zircon.api.uievent.KeyboardEventType
-import org.hexworks.zircon.api.uievent.MouseEventType
-import org.hexworks.zircon.api.uievent.Processed
+import org.hexworks.zircon.api.graphics.Layer
+import org.hexworks.zircon.api.uievent.*
 
 object TargetPicker : BaseFacet<GameContext>() {
 
     override fun executeCommand(command: GameCommand<out EntityType>) = command.
         responseWhenCommandIs(SelectTarget::class) { (context, source, spell) ->
             val (world, screen, uiEvent) = context
-            var mousePosition = screen.cursorPosition()
-            println(mousePosition)
+            val listOfTargetPositions = mutableListOf<Position3D>()
+
+            //TODO(In the future range and aoe are influenced by caster skills)
+            val range = spell.baseRange
+            val aoe = spell.areaOfEffect
+            val rangeAOE = source.position.to2DPosition().buildAOEWithRadius(range)
 
             val selectionLayer = Layers.newBuilder()
                 .withSize(world.actualSize().to2DSize())
                 .build()
             world.pushOverlayAt(selectionLayer, source.position.z)
 
-
-            val rangeAOE = source.position.to2DPosition().buildAOEWithRadius(spell.baseRange)
-
             rangeAOE.forEach {
                 selectionLayer.setTileAt(it, GameTileRepository.IN_RANGE)
             }
-
-            val range = spell.baseRange
-            val aoe = spell.areaOfEffect
-
-
-
-            val listOfTargetPositions = mutableListOf<Position3D>()
 
             val panel = Components.panel()
                 .withSize(screen.size.minus(Size.create(1,1)))
@@ -77,43 +71,15 @@ object TargetPicker : BaseFacet<GameContext>() {
                 .withAlignmentWithin(screen, ComponentAlignment.TOP_RIGHT)
                 .build()
 
-            gameComponent.processKeyboardEvents(KeyboardEventType.KEY_PRESSED) { event, _ ->
-                when(event.code) {
-                    KeyCode.ESCAPE -> {
-                        modal.close(TargetPickerModalResult(false, listOf()))
-                        Processed
-                    }
-                    KeyCode.ENTER -> {
-                        modal.close(TargetPickerModalResult(true, listOfTargetPositions))
-                        Processed
-                    }
-                    else -> Processed
-                }
-            }
-
             gameComponent.processMouseEvents(MouseEventType.MOUSE_MOVED) { event, _ ->
-                val worldOffset = world.visibleOffset().to2DPosition()
-                val componentOffset = gameComponent.absolutePosition
-
-                mousePosition = event.position.plus(worldOffset).minus(componentOffset)
-                val distance = mousePosition.getDistanceFrom(source.position.to2DPosition())
-                selectionLayer.clear()
-                rangeAOE.forEach {
-                    selectionLayer.setTileAt(it, GameTileRepository.IN_RANGE)
-                }
-
-                if (distance <= range) {
-                    aoe.forEach {
-                        selectionLayer.setTileAt(mousePosition.plus(it), GameTileRepository.SELECTED_VALID)
-                    }
-                } else {
-                    selectionLayer.setTileAt(mousePosition, GameTileRepository.SELECTED_INVALID)
-                }
+                val mousePosition = world.screenToWorldPosition(event.position, gameComponent.absolutePosition)
+                drawAoE(mousePosition, selectionLayer, source, spell)
 
                 Processed
             }
 
             gameComponent.processMouseEvents(MouseEventType.MOUSE_RELEASED) { event, _ ->
+                val mousePosition = world.screenToWorldPosition(event.position, gameComponent.absolutePosition)
                 when(event.button) {
                     1 -> {
                         aoe.forEach {
@@ -132,6 +98,20 @@ object TargetPicker : BaseFacet<GameContext>() {
                     }
                 }
                 Processed
+            }
+
+            gameComponent.processKeyboardEvents(KeyboardEventType.KEY_PRESSED) { event, _ ->
+                when(event.code) {
+                    KeyCode.ESCAPE -> {
+                        modal.close(TargetPickerModalResult(false, listOf()))
+                        Processed
+                    }
+                    KeyCode.ENTER -> {
+                        modal.close(TargetPickerModalResult(true, listOfTargetPositions))
+                        Processed
+                    }
+                    else -> Processed
+                }
             }
 
             modal.applyColorTheme(GameConfig.THEME)
@@ -153,4 +133,23 @@ object TargetPicker : BaseFacet<GameContext>() {
 
             Consumed
         }
+
+    fun drawAoE(mousePosition: Position, selectionLayer: Layer, source: GameEntity<Spellcaster>, spell: Spell) {
+        val rangeAOE = source.position.to2DPosition().buildAOEWithRadius(spell.baseRange)
+        val distance = mousePosition.getDistanceFrom(source.position.to2DPosition())
+
+        selectionLayer.clear()
+
+        rangeAOE.forEach {
+            selectionLayer.setTileAt(it, GameTileRepository.IN_RANGE)
+        }
+
+        if (distance <= spell.baseRange) {
+            spell.areaOfEffect.forEach {
+                selectionLayer.setTileAt(mousePosition.plus(it), GameTileRepository.SELECTED_VALID)
+            }
+        } else {
+            selectionLayer.setTileAt(mousePosition, GameTileRepository.SELECTED_INVALID)
+        }
+    }
 }

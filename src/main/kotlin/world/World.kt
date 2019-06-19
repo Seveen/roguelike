@@ -131,8 +131,7 @@ class World(startingBlocks: Map<Position3D, GameBlock>,
         engine.update(GameContext(
             world = this,
             screen = screen,
-            uiEvent = uiEvent,
-            player = game.player
+            uiEvent = uiEvent
         ))
     }
 
