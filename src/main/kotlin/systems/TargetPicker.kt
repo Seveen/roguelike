@@ -47,7 +47,7 @@ object TargetPicker : BaseFacet<GameContext>() {
                 selectionLayer.setTileAt(it, GameTileRepository.IN_RANGE)
             }
 
-            val panel = Components.panel()
+            val targetSelectPanel = Components.panel()
                 .withSize(screen.size.minus(Size.create(1,1)))
                 .build()
 
@@ -55,7 +55,7 @@ object TargetPicker : BaseFacet<GameContext>() {
                 .withSize(GameConfig.SIDEBAR_WIDTH, GameConfig.WINDOW_HEIGHT)
                 .withDecorations(box(title = "Casting ${spell.name}"))
                 .build()
-            panel.addComponent(sidebar)
+            targetSelectPanel.addComponent(sidebar)
 
             val gameComponent = GameComponents.newGameComponentBuilder<Tile, GameBlock>()
                 .withGameArea(world)
@@ -63,11 +63,11 @@ object TargetPicker : BaseFacet<GameContext>() {
                 .withProjectionMode(ProjectionMode.TOP_DOWN)
                 .withAlignmentWithin(screen, ComponentAlignment.TOP_RIGHT)
                 .build()
-            panel.addComponent(gameComponent)
+            targetSelectPanel.addComponent(gameComponent)
 
             val modal = ModalBuilder.newBuilder<TargetPickerModalResult>()
                 .withParentSize(screen.size)
-                .withComponent(panel)
+                .withComponent(targetSelectPanel)
                 .withAlignmentWithin(screen, ComponentAlignment.TOP_RIGHT)
                 .build()
 

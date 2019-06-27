@@ -1,8 +1,10 @@
 package com.necroworld.world
 
 import com.necroworld.GameConfig
+import com.necroworld.GameConfig.ARMOR_PER_LEVEL
 import com.necroworld.GameConfig.BATS_PER_LEVEL
 import com.necroworld.GameConfig.FUNGI_PER_LEVEL
+import com.necroworld.GameConfig.WEAPONS_PER_LEVEL
 import com.necroworld.GameConfig.WORLD_SIZE
 import com.necroworld.GameConfig.ZIRCONS_PER_LEVEL
 import com.necroworld.attributes.types.Player
@@ -33,9 +35,11 @@ class GameBuilder(val worldSize: Size3D) {
         val player = addPlayer()
         addFungi()
         addBats()
-//        addStalker()
+        addStalker()
         addKobold()
         addZircons()
+        addWeapons()
+        addArmor()
 
         val game = Game.create(
             player = player,
@@ -103,6 +107,22 @@ class GameBuilder(val worldSize: Size3D) {
         repeat(world.actualSize().zLength) { level ->
             repeat(ZIRCONS_PER_LEVEL) {
                 EntityFactory.newZircon().addToWorld(level)
+            }
+        }
+    }
+
+    private fun addWeapons() = also {
+        repeat(world.actualSize().zLength) { level ->
+            repeat(WEAPONS_PER_LEVEL) {
+                EntityFactory.newRandomWeapon().addToWorld(level)
+            }
+        }
+    }
+
+    private fun addArmor() = also {
+        repeat(world.actualSize().zLength) { level ->
+            repeat(ARMOR_PER_LEVEL) {
+                EntityFactory.newRandomArmor().addToWorld(level)
             }
         }
     }

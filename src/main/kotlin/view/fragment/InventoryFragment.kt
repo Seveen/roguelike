@@ -1,16 +1,21 @@
 package com.necroworld.view.fragment
 
+import com.necroworld.GameConfig
 import com.necroworld.attributes.Inventory
 import com.necroworld.extensions.GameItem
+import org.hexworks.cobalt.datatypes.Maybe
+import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.Fragment
+import org.hexworks.zircon.api.component.VBox
 import org.hexworks.zircon.api.extensions.processComponentEvents
 import org.hexworks.zircon.api.uievent.ComponentEventType
 import org.hexworks.zircon.api.uievent.Processed
 
 class InventoryFragment(inventory: Inventory,
                         width: Int,
-                        onDrop: (GameItem) -> Unit) : Fragment {
+                        private val onDrop: (GameItem) -> Unit,
+                        private val onEquip: (GameItem) -> Maybe<GameItem>) : Fragment {
 
     override val root = Components.vbox()
         .withSize(width, inventory.size + 1)
@@ -25,15 +30,27 @@ class InventoryFragment(inventory: Inventory,
                     addComponent(Components.header().withText("Actions").withSize(ACTIONS_COLUMN_WIDTH, 1))
             })
             inventory.items.forEach { item ->
-                addFragment(InventoryRowFragment(width, item).apply {
-                    dropButton.processComponentEvents(ComponentEventType.ACTIVATED) {
-                        list.removeComponent(this.root)
-                        onDrop(item)
-                        Processed
-                    }
-                })
+                addRow(width, item, list)
             }
         }
+
+    private fun addRow(width: Int, item: GameItem, list: VBox) {
+        list.addFragment(InventoryRowFragment(width, item).apply {
+            dropButton.processComponentEvents(ComponentEventType.ACTIVATED) {
+                list.removeComponent(this.root)
+                onDrop(item)
+                Processed
+            }
+            equipButton.processComponentEvents(ComponentEventType.ACTIVATED) {
+                onEquip(item).map { oldItem ->
+                    list.removeComponent(this.root)
+                    addRow(width,oldItem,list)
+                }
+                Processed
+            }
+        })
+        list.applyColorTheme(GameConfig.THEME)
+    }
 
     companion object {
         const val NAME_COLUMN_WIDTH = 15

@@ -1,6 +1,7 @@
 package com.necroworld.builders
 
 import org.hexworks.zircon.api.Tiles
+import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.color.TileColor
 import org.hexworks.zircon.api.data.CharacterTile
 import org.hexworks.zircon.api.graphics.Symbols
@@ -96,6 +97,54 @@ object GameTileRepository {
     val ZIRCON: CharacterTile = Tiles.newBuilder()
         .withCharacter(',')
         .withForegroundColor(GameColors.ZIRCON_COLOR)
+        .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+        .buildCharacterTile()
+
+    val CLUB = Tiles.newBuilder()
+        .withCharacter('(')
+        .withForegroundColor(ANSITileColor.GRAY)
+        .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+        .buildCharacterTile()
+
+    val DAGGER = Tiles.newBuilder()
+        .withCharacter('(')
+        .withForegroundColor(ANSITileColor.WHITE)
+        .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+        .buildCharacterTile()
+
+    val SWORD = Tiles.newBuilder()
+        .withCharacter('(')
+        .withForegroundColor(ANSITileColor.BRIGHT_WHITE)
+        .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+        .buildCharacterTile()
+
+    val STAFF = Tiles.newBuilder()
+        .withCharacter('(')
+        .withForegroundColor(ANSITileColor.YELLOW)
+        .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+        .buildCharacterTile()
+
+    val JACKET = Tiles.newBuilder()
+        .withCharacter('[')
+        .withForegroundColor(ANSITileColor.GRAY)
+        .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+        .buildCharacterTile()
+
+    val LIGHT_ARMOR = Tiles.newBuilder()
+        .withCharacter('[')
+        .withForegroundColor(ANSITileColor.GREEN)
+        .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+        .buildCharacterTile()
+
+    val MEDIUM_ARMOR = Tiles.newBuilder()
+        .withCharacter('[')
+        .withForegroundColor(ANSITileColor.WHITE)
+        .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+        .buildCharacterTile()
+
+    val HEAVY_ARMOR = Tiles.newBuilder()
+        .withCharacter('[')
+        .withForegroundColor(ANSITileColor.BRIGHT_WHITE)
         .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
         .buildCharacterTile()
 }

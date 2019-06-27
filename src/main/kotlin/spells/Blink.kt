@@ -28,6 +28,7 @@ class Blink : GroundSpell {
         casterBlock.get().removeEntity(caster)
         caster.position = target.toPosition3D(caster.position.z)
         targetBlock.get().addEntity(caster)
+        //TODO(nothing is updated. Consider emiting a move command instead)
 
         val subject = if (caster.isPlayer) {
             "You"

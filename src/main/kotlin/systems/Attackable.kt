@@ -22,7 +22,7 @@ object Attackable : BaseFacet<GameContext>() {
                 allied = attacker.faction == target.faction
             }
             if (allied.not()) {
-                val damage = Math.max(0, attacker.combatStats.attackValue - target.combatStats.defenseValue)
+                val damage = Math.max(0, attacker.attackValue - target.defenseValue)
                 val finalDamage = (Math.random() * damage).toInt() + 1
                 target.combatStats.hp -= finalDamage
 
