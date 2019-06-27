@@ -23,10 +23,10 @@ class Fireball : EntitySpell {
     private val damage = 10
     override val effects = listOf<(context: GameContext, caster: GameEntity<Spellcaster>, target: GameEntity<EntityType>) -> Unit>
     { context, caster, target ->
+        caster.spellcastStats.mana -= baseManaCost
         target.whenTypeIs<Combatant> {
             val finalDamage = (Math.random() * damage).toInt() + 1
             it.combatStats.hp -= finalDamage
-            caster.spellcastStats.mana -= baseManaCost
 
             logGameEvent("The fireball burns the $it for $finalDamage!")
 

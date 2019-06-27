@@ -1,6 +1,7 @@
 package com.necroworld.spells
 
 import com.necroworld.attributes.types.Spellcaster
+import com.necroworld.attributes.types.spellcastStats
 import com.necroworld.extensions.GameEntity
 import com.necroworld.extensions.isPlayer
 import com.necroworld.extensions.position
@@ -23,6 +24,8 @@ class Swap : EntitySpell {
 
         val targetBlock = world.fetchBlockAt(targetOldPosition)
         val casterBlock = world.fetchBlockAt(casterOldPosition)
+
+        caster.spellcastStats.mana -= baseManaCost
 
         targetBlock.get().removeEntity(target)
         casterBlock.get().removeEntity(caster)

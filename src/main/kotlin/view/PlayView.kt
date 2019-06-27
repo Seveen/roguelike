@@ -3,6 +3,7 @@ package com.necroworld.view
 import com.necroworld.GameConfig
 import com.necroworld.blocks.GameBlock
 import com.necroworld.events.GameLogEvent
+import com.necroworld.view.fragment.PlayerStatsFragment
 import com.necroworld.world.Game
 import com.necroworld.world.GameBuilder
 import org.hexworks.cobalt.events.api.subscribe
@@ -32,6 +33,11 @@ class PlayView(private val game: Game = GameBuilder.defaultGame()) : BaseView() 
             .withSize(GameConfig.SIDEBAR_WIDTH, GameConfig.WINDOW_HEIGHT)
             .withDecorations(box())
             .build()
+        sidebar.addFragment(PlayerStatsFragment(
+            width = sidebar.contentSize.width,
+            player = game.player
+        ))
+
         screen.addComponent(sidebar)
 
         val logArea = Components.logArea()

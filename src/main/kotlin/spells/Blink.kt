@@ -1,6 +1,7 @@
 package com.necroworld.spells
 
 import com.necroworld.attributes.types.Spellcaster
+import com.necroworld.attributes.types.spellcastStats
 import com.necroworld.extensions.GameEntity
 import com.necroworld.extensions.isPlayer
 import com.necroworld.extensions.position
@@ -21,6 +22,8 @@ class Blink : GroundSpell {
 
         val casterBlock = world.fetchBlockAt(casterOldPosition)
         val targetBlock = world.fetchBlockAt(target.toPosition3D(caster.position.z))
+
+        caster.spellcastStats.mana -= baseManaCost
 
         casterBlock.get().removeEntity(caster)
         caster.position = target.toPosition3D(caster.position.z)
