@@ -35,6 +35,10 @@ class World(startingBlocks: Map<Position3D, GameBlock>,
                 .build() {
 
     private val engine: Engine<GameContext> = Engines.newEngine()
+    //TODO: dissociate world + engine from area
+    //The world should be an overmap + geopolitics
+    //The areas should be what is rn the world
+    //One engine for each area, or use the same engine and unload and load it ?
 
     private val decisionMaps: HashMap<String, DecisionMap> = hashMapOf()
 

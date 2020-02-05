@@ -195,37 +195,11 @@ class DecisionMap(private val size: Size3D, private val callback: (position: Pos
     private fun getLowestNeighborAtCoords(x: Int, y: Int): Double {
         var lowest = Double.MAX_VALUE
 
-        var value = getValueAtCoords(x - 1 , y - 1)
-        if ( value < lowest) {
-            lowest = value
-        }
-        value = getValueAtCoords(x , y - 1)
-        if ( value < lowest) {
-            lowest = value
-        }
-        value = getValueAtCoords(x + 1 , y - 1)
-        if ( value < lowest) {
-            lowest = value
-        }
-        value = getValueAtCoords(x - 1 , y)
-        if ( value < lowest) {
-            lowest = value
-        }
-        value = getValueAtCoords(x + 1 , y)
-        if ( value < lowest) {
-            lowest = value
-        }
-        value = getValueAtCoords(x - 1 , y + 1)
-        if ( value < lowest) {
-            lowest = value
-        }
-        value = getValueAtCoords(x , y + 1)
-        if ( value < lowest) {
-            lowest = value
-        }
-        value = getValueAtCoords(x + 1 , y + 1)
-        if ( value < lowest) {
-            lowest = value
+        Position3D.create(x, y, 0).sameLevelNeighbors().forEach {
+            val value = getValueAtCoords(it.x, it.y)
+            if (value < lowest) {
+                lowest = value
+            }
         }
 
         return lowest
